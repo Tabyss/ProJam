@@ -1,0 +1,11 @@
+#root {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.node-container:hover .connector-dot {
+    opacity: 1;
+}
