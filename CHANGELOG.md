@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/Tabyss/ProJam/compare/v1.0.0...v1.1.0) (2026-06-30)
+
+
+### Features
+
+* add strict commit ([389a85d](https://github.com/Tabyss/ProJam/commit/389a85d67f2dd64289d5da713cfe5353c09f8574))
+
 ## 1.0.0 (2026-06-30)
 
 
