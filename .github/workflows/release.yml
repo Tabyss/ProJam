@@ -1,0 +1,20 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main # Ubah ke 'master' jika default branch kamu master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          # 'node' release type sangat cocok untuk React/Vite TS
+          # Ini akan otomatis membaca dan mengupdate package.json
+          release-type: node
