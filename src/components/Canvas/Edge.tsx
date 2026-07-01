@@ -1,33 +1,48 @@
-import { useEdgeStore } from "../../store/useEdgeStore";
-import {
-    useNodeStore,
-    type CanvasNode,
-    type HandlePos,
-} from "../../store/useNodeStore";
+import { useEdgeStore, type Point } from "../../store/useEdgeStore";
 
-const getHandleCoords = (node: CanvasNode, handle: HandlePos) => {
-    switch (handle) {
-      case 'top': return { x: node.x + node.width / 2, y: node.y };
-      case 'right': return { x: node.x + node.width, y: node.y + node.height / 2 };
-      case 'bottom': return { x: node.x + node.width / 2, y: node.y + node.height };
-      case 'left': return { x: node.x, y: node.y + node.height / 2 };
+const createRoundedPath = (points: Point[], radius = 12): string => {
+    if (points.length < 2) return "";
+    let path = `M ${points[0].x} ${points[0].y}`;
+
+    for (let i = 1; i < points.length - 1; i++) {
+        const prev = points[i - 1];
+        const curr = points[i];
+        const next = points[i + 1];
+
+        const dir1 = {
+            x: Math.sign(curr.x - prev.x),
+            y: Math.sign(curr.y - prev.y),
+        };
+        const dir2 = {
+            x: Math.sign(next.x - curr.x),
+            y: Math.sign(next.y - curr.y),
+        };
+
+        const dist1 = Math.sqrt(
+            Math.pow(curr.x - prev.x, 2) + Math.pow(curr.y - prev.y, 2),
+        );
+        const dist2 = Math.sqrt(
+            Math.pow(next.x - curr.x, 2) + Math.pow(next.y - curr.y, 2),
+        );
+        const actualRadius = Math.min(radius, dist1 / 2, dist2 / 2);
+
+        const startArc = {
+            x: curr.x - dir1.x * actualRadius,
+            y: curr.y - dir1.y * actualRadius,
+        };
+        const endArc = {
+            x: curr.x + dir2.x * actualRadius,
+            y: curr.y + dir2.y * actualRadius,
+        };
+
+        path += ` L ${startArc.x} ${startArc.y} Q ${curr.x} ${curr.y} ${endArc.x} ${endArc.y}`;
     }
-  };
-
-  const getControlPoint = (x: number, y: number, handle: HandlePos, offset = 80) => {
-    switch (handle) {
-      case 'top': return { x, y: y - offset };
-      case 'right': return { x: x + offset, y };
-      case 'bottom': return { x, y: y + offset };
-      case 'left': return { x: x - offset, y };
-    }
-  };
-
+    path += ` L ${points[points.length - 1].x} ${points[points.length - 1].y}`;
+    return path;
+};
 
 export const Edge = () => {
     const { edges, draftEdge } = useEdgeStore();
-    const nodes = useNodeStore((s) => s.nodes);
-    console.log(edges)
 
     return (
         <svg
@@ -41,62 +56,32 @@ export const Edge = () => {
                 pointerEvents: "none",
             }}
         >
-            {edges.map((edge) => {
-                const sourceNode = nodes.find((n) => n.id === edge.source);
-                const targetNode = nodes.find((n) => n.id === edge.target);
-                if (!sourceNode || !targetNode) return null;
-
-                const start = getHandleCoords(sourceNode, edge.sourceHandle);
-                const end = getHandleCoords(targetNode, edge.targetHandle);
-                const cp1 = getControlPoint(
-                    start.x,
-                    start.y,
-                    edge.sourceHandle,
-                );
-                const cp2 = getControlPoint(end.x, end.y, edge.targetHandle);
-
-                const pathData = `M ${start.x} ${start.y} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y}, ${end.x} ${end.y}`;
-
+            {/* 1. RENDER EDGES PERMANEN */}
+            {edges?.map((edge) => {
+                // Untuk edges permanen, kita asumsikan kamu punya logic
+                // untuk mendapatkan titik-titik jalurnya di store/store-utils
+                const points = edge.waypoints ?? [];
                 return (
                     <path
                         key={edge.id}
-                        d={pathData}
-                        stroke="#555"
-                        strokeWidth="3"
+                        d={createRoundedPath(points)}
+                        stroke="#64748b"
+                        strokeWidth="2"
                         fill="none"
                     />
                 );
             })}
 
-            {draftEdge &&
-                (() => {
-                    const sourceNode = nodes.find(
-                        (n) => n.id === draftEdge.source,
-                    );
-                    if (!sourceNode) return null;
-
-                    const start = getHandleCoords(
-                        sourceNode,
-                        draftEdge.sourceHandle,
-                    );
-                    const end = { x: draftEdge.x, y: draftEdge.y };
-                    const cp1 = getControlPoint(
-                        start.x,
-                        start.y,
-                        draftEdge.sourceHandle,
-                    );
-                    const pathData = `M ${start.x} ${start.y} C ${cp1.x} ${cp1.y}, ${end.x} ${end.y}, ${end.x} ${end.y}`;
-
-                    return (
-                        <path
-                            d={pathData}
-                            stroke="#3b82f6"
-                            strokeWidth="3"
-                            strokeDasharray="5,5"
-                            fill="none"
-                        />
-                    );
-                })()}
+            {/* 2. RENDER DRAFT EDGE (STRUKTUR POINT TETAP SAMA) */}
+            {draftEdge && (
+                <path
+                    d={createRoundedPath(draftEdge.point)}
+                    stroke="#3b82f6"
+                    strokeWidth="2"
+                    strokeDasharray="5,5"
+                    fill="none"
+                />
+            )}
         </svg>
     );
 };
