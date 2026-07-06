@@ -35,17 +35,20 @@ const useEdge = () => {
         handlePos: pos,
     ) => {
         e.stopPropagation();
-        const coords = getNodePointCoords(node, handlePos);
+
+        const startPoint = getNodePointCoords(node, handlePos);
+
+        const currentMousePos = {
+            x: (e.clientX - coord.x) / scale,
+            y: (e.clientY - coord.y) / scale,
+        };
 
         setDraftEdge({
             sourceNodeId: node.id,
             sourceHandle: handlePos,
             point: [
-                { x: coords.x, y: coords.y },
-                {
-                    x: (e.clientX - coords.x) / scale,
-                    y: (e.clientY - coords.y) / scale,
-                },
+                { x: startPoint.x, y: startPoint.y },
+                currentMousePos,
             ],
         });
     };
