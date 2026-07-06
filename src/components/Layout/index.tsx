@@ -1,7 +1,7 @@
 import { useNodeStore } from "../../store/useNodeStore";
 import CanvasWrapper from "../Canvas/CanvasWrapper";
 import { Edge } from "../Canvas/Edge";
-import Node from "../Canvas/Node";
+import Node from "../Canvas/Node/Node";
 import Menu from "./Menu/Menu";
 
 const Layout = () => {

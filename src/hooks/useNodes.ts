@@ -6,7 +6,7 @@ import type { pos } from "../types/global";
 
 const useNodes = () => {
     const { coord, scale } = useCanvasStore();
-    const { draftEdge, addEdge, removeDraftEdge } = useEdgeStore();
+    const { draftEdge, addEdge, setSelectedEdgeId, removeDraftEdge } = useEdgeStore();
     const {
         setSelectedNodeId,
         setDraggedNodeId,
@@ -18,6 +18,7 @@ const useNodes = () => {
         e.stopPropagation();
         setSelectedNodeId(node.id);
         setDraggedNodeId(node.id);
+        setSelectedEdgeId(null)
         setNodeOffset(
             (e.clientX - coord.x) / scale - node.obj.x,
             (e.clientY - coord.y) / scale - node.obj.y,
@@ -35,36 +36,8 @@ const useNodes = () => {
         });
     };
 
-    const handleRotateMouseDown = (e: React.MouseEvent, node: NodeProps) => {
-        e.stopPropagation();
-
-        const nodeCenterX = node.obj.x + node.obj.width / 2;
-        const nodeCenterY = node.obj.y + node.obj.height / 2;
-
-        const onMouseMove = (moveEvent: MouseEvent) => {
-            const deltaX = moveEvent.clientX - nodeCenterX;
-            const deltaY = moveEvent.clientY - nodeCenterY;
-
-            let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
-
-            angle = (angle + 90) % 360;
-
-            useNodeStore.getState().updateNode(node.id, {
-                obj: { ...node.obj, rotation: Math.round(angle) },
-            });
-        };
-
-        const onMouseUp = () => {
-            document.removeEventListener("mousemove", onMouseMove);
-            document.removeEventListener("mouseup", onMouseUp);
-        };
-
-        document.addEventListener("mousemove", onMouseMove);
-        document.addEventListener("mouseup", onMouseUp);
-    };
-
     const handleNodeMouseUp = (e: React.MouseEvent, targetNode: NodeProps) => {
-        if (draftEdge && draftEdge.source !== targetNode.id) {
+        if (draftEdge && draftEdge.sourceNodeId !== targetNode.id) {
             const dropX = (e.clientX - coord.x) / scale;
             const dropY = (e.clientY - coord.y) / scale;
 
@@ -83,12 +56,19 @@ const useNodes = () => {
                 (a, b) => (distances[a] < distances[b] ? a : b),
             );
 
+            const anchorDot = {
+                nodeId: String(draftEdge.sourceNodeId),
+                nodeFace: draftEdge.sourceHandle,
+            };
+            const dropDot = {
+                nodeId: String(targetNode.id),
+                nodeFace: closestHandle,
+            };
+
             addEdge({
-                id: Date.now().toString(),
-                source: draftEdge.source,
-                sourceHandle: draftEdge.sourceHandle,
-                target: targetNode.id,
-                targetHandle: closestHandle,
+                id: `edge_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                source: draftEdge.isReversing ? [dropDot] : [anchorDot],
+                target: draftEdge.isReversing ? [anchorDot] : [dropDot],
                 waypoints: [...draftEdge.point],
             });
         }
@@ -98,7 +78,6 @@ const useNodes = () => {
     return {
         handleNodeMouseDown,
         handleResizeMouseDown,
-        handleRotateMouseDown,
         handleNodeMouseUp,
     };
 };

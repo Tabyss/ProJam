@@ -5,7 +5,6 @@ import { useEdgeStore } from "../store/useEdgeStore";
 import useEdge from "./useEdge";
 
 export const useCanvas = () => {
-    // 1. STORES
     const {
         coord,
         scale,
@@ -20,16 +19,17 @@ export const useCanvas = () => {
     const {
         draggedNodeId,
         resizingNode,
+        selectedNodeId,
         setDraggedNodeId,
         setResizingNode,
+        setSelectedNodeId,
         updateNode,
         nodeOffset,
     } = useNodeStore();
 
-    const { draftEdge, setDraftEdge } = useEdgeStore();
+    const { draftEdge, selectedEdgeId, setDraftEdge, setSelectedEdgeId } =
+        useEdgeStore();
     const { handleEdgeMouseMove } = useEdge();
-
-    // --- SUB-HANDLERS (Modular Logics) ---
 
     const handlePanning = useCallback(
         (e: React.MouseEvent) => {
@@ -72,8 +72,6 @@ export const useCanvas = () => {
         [resizingNode, scale, updateNode],
     );
 
-    // --- MAIN ORCHESTRATOR ---
-
     const handleWheel = (e: React.WheelEvent) => {
         const zoomFactor = 0.001;
         const delta = e.deltaY * zoomFactor;
@@ -94,8 +92,20 @@ export const useCanvas = () => {
         (e: React.MouseEvent) => {
             setIsPanning(true);
             setPanStart({ x: e.clientX - coord.x, y: e.clientY - coord.y });
+
+            if (selectedNodeId) setSelectedNodeId(null);
+
+            if (selectedEdgeId) setSelectedEdgeId(null);
         },
-        [coord, setIsPanning, setPanStart],
+        [
+            coord,
+            setIsPanning,
+            setPanStart,
+            selectedNodeId,
+            selectedEdgeId,
+            setSelectedNodeId,
+            setSelectedEdgeId,
+        ],
     );
 
     const handleMouseMove = useCallback(
