@@ -3,13 +3,13 @@ import { useCanvas } from "../../hooks/useCanvas";
 import { useCanvasStore } from "../../store/useCanvasStore";
 
 const CanvasWrapper = ({ children }: { children: React.ReactNode }) => {
-    const { x, y, scale, isPanning } = useCanvasStore();
+    const { coord, scale, isPanning } = useCanvasStore();
 
     const {
         handleWheel,
         handleCanvasMouseDown,
         handleMouseMove,
-        handleMouseUp,
+        handleCanvasMouseUp,
     } = useCanvas();
 
     return (
@@ -17,25 +17,21 @@ const CanvasWrapper = ({ children }: { children: React.ReactNode }) => {
             onWheel={handleWheel}
             onMouseDown={handleCanvasMouseDown}
             onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
+            onMouseUp={handleCanvasMouseUp}
+            onMouseLeave={handleCanvasMouseUp}
+            className={`flex-1 relative overflow-hidden bg-base-50 w-full h-full ${
+                isPanning ? "cursor-grabbing" : "cursor-default"
+            }`}
             style={{
-                flex: 1,
-                backgroundImage:
-                    "radial-gradient(#ffffff44 1px, transparent 1px)",
+                backgroundImage: "radial-gradient(var(--color-base-100) 1.5px, transparent 1.5px)",
                 backgroundSize: `${20 * scale}px ${20 * scale}px`,
-                backgroundPosition: `${x}px ${y}px`,
-                cursor: isPanning ? "grabbing" : "default",
-                position: "relative",
-                overflow: "hidden",
+                backgroundPosition: `${coord.x}px ${coord.y}px`,
             }}
         >
             <div
+                className="w-full h-full origin-top-left"
                 style={{
-                    transform: `translate(${x}px, ${y}px) scale(${scale})`,
-                    transformOrigin: "0 0",
-                    width: "100%",
-                    height: "100%",
+                    transform: `translate(${coord.x}px, ${coord.y}px) scale(${scale})`,
                 }}
             >
                 {children}

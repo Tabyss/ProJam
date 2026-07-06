@@ -1,26 +1,14 @@
 import { create } from "zustand";
+import type { NodeProps, NodeSize } from "../types/nodes";
 
-export type HandlePos = "top" | "right" | "bottom" | "left";
-
-export interface CanvasNode {
-    id: string;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    title: string;
-    color: string;
-}
-export interface NodeSize {
-    id: string;
-    startW: number;
-    startH: number;
-    startX: number;
-    startY: number;
-}
+type DeepPartial<T> = T extends (...args: unknown[]) => unknown
+    ? T
+    : T extends object
+      ? { [P in keyof T]?: DeepPartial<T[P]> }
+      : T;
 
 interface NodeState {
-    nodes: CanvasNode[];
+    nodes: NodeProps[];
     selectedNodeId: string | null;
     editingNodeId: string | null;
     draggedNodeId: string | null;
@@ -33,8 +21,8 @@ interface NodeState {
     setResizingNode: (node: NodeSize | null) => void;
     setNodeOffset: (x: number, y: number) => void;
 
-    addNode: (node: CanvasNode) => void;
-    updateNode: (id: string, updates: Partial<CanvasNode>) => void;
+    addNode: (node: NodeProps) => void;
+    updateNode: (id: string, updates: DeepPartial<NodeProps>) => void;
     removeNode: (id: string) => void;
 }
 
@@ -42,14 +30,41 @@ export const useNodeStore = create<NodeState>((set) => ({
     nodes: [
         {
             id: "1",
-            x: 100,
-            y: 150,
-            width: 150,
-            height: 80,
-            title: "Planning",
-            color: "#3b82f6",
+            obj: {
+                x: 100,
+                y: 150,
+                width: 150,
+                height: 80,
+                minWidth: 100,
+                minHeight: 50,
+                shape: "rectangle",
+                rotation: 0,
+            },
+            style: {
+                color: "#3b82f6",
+                border: { width: 1, color: "#1e40af" },
+            },
+            value: {
+                header: "Planning",
+                text: "Deskripsi planning",
+            },
+            state: {
+                isSelected: false,
+                isDragging: false,
+                isError: false,
+                isReadOnly: false,
+                zIndex: 1,
+            },
+            metadata: {
+                type: "default",
+                tags: ["start"],
+                version: 1,
+                updatedAt: Date.now(),
+            },
+            ports: [{ id: "port-1", type: "output", pos: "right" }],
         },
     ],
+
     selectedNodeId: null,
     editingNodeId: null,
     draggedNodeId: null,
@@ -65,14 +80,64 @@ export const useNodeStore = create<NodeState>((set) => ({
     addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
 
     updateNode: (id, updates) =>
-        set((state) => ({
-            nodes: state.nodes.map((n) =>
-                n.id === id ? { ...n, ...updates } : n,
-            ),
-        })),
+        set((state) => {
+            const newNodes = state.nodes.map((n) => {
+                if (n.id !== id) return n;
+
+                const updated: NodeProps = {
+                    ...n,
+                    obj: updates.obj ? { ...n.obj, ...updates.obj } : n.obj,
+                    style: updates.style
+                        ? ({
+                              ...n.style,
+                              ...updates.style,
+                          } as NodeProps["style"])
+                        : n.style,
+                    value: updates.value
+                        ? ({
+                              ...n.value,
+                              ...updates.value,
+                          } as NodeProps["value"])
+                        : n.value,
+                    state: updates.state
+                        ? ({
+                              ...n.state,
+                              ...updates.state,
+                          } as NodeProps["state"])
+                        : n.state,
+                    metadata: updates.metadata
+                        ? ({
+                              ...n.metadata,
+                              ...updates.metadata,
+                          } as NodeProps["metadata"])
+                        : n.metadata,
+                    ports: updates.ports
+                        ? (updates.ports as NodeProps["ports"])
+                        : n.ports,
+                };
+
+                return updated;
+            });
+
+            // // TRIGGER UPDATE EDGE JIKA POSISI/UKURAN BERUBAH
+            // if (updates.obj && ('x' in updates.obj || 'y' in updates.obj || 'width' in updates.obj || 'height' in updates.obj)) {
+            //     const updatedNode = newNodes.find(n => n.id === id);
+            //     if (updatedNode) {
+            //         useEdgeStore.getState().updateConnectedEdges(
+            //             id,
+            //             updatedNode.obj.x,
+            //             updatedNode.obj.y,
+            //             newNodes
+            //         );
+            //     }
+            // }
+
+            return { nodes: newNodes };
+        }),
 
     removeNode: (id) =>
-        set((state) => ({
-            nodes: state.nodes.filter((n) => n.id !== id),
-        })),
+        set((state) => {
+            const newNodes = state.nodes.filter((n) => n.id !== id);
+            return { nodes: newNodes };
+        }),
 }));

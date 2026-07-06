@@ -1,48 +1,59 @@
 import { create } from "zustand";
-import type { HandlePos } from "./useNodeStore";
+import type { pos } from "../types/global";
+import type { EdgeProps } from "../types/edge";
 
-export interface Edge {
-    id: string;
-    source: string;
-    sourceHandle: HandlePos;
-    target: string;
-    targetHandle: HandlePos;
-}
-
-export interface DraftEdge {
-    source: string;
-    sourceHandle: HandlePos;
+export interface Point {
     x: number;
     y: number;
 }
 
+export interface DraftEdge {
+    sourceNodeId: string | number;
+    sourceHandle: pos;
+    point: Point[];
+    isReversing?: boolean;
+}
+
 interface EdgeState {
-    edges: Edge[];
+    edges: EdgeProps[];
     draftEdge: DraftEdge | null;
-    addEdge: (edge: Edge) => void;
+    selectedEdgeId: string | null;
+    
+    addEdge: (edge: EdgeProps) => void;
+    updateEdge: (id: string, updates: Partial<EdgeProps>) => void;
+    removeEdge: (id: string) => void;
+    
     setDraftEdge: (draft: DraftEdge | null) => void;
+    setSelectedEdgeId: (id: string | null) => void;
     updateDraftEdge: (updates: Partial<DraftEdge>) => void;
     removeDraftEdge: () => void;
 }
 
 export const useEdgeStore = create<EdgeState>((set) => ({
-    edges: [
-        {
-            id: "e1",
-            source: "1",
-            sourceHandle: "right",
-            target: "2",
-            targetHandle: "left",
-        },
-    ],
+    edges: [],
     draftEdge: null,
+    selectedEdgeId: null,
+
     addEdge: (edge) => set((state) => ({ edges: [...state.edges, edge] })),
-    setDraftEdge: (draft) => set({ draftEdge: draft }),
-    updateDraftEdge: (updates) =>
+    updateEdge: (id, updates) =>
         set((state) => ({
-            draftEdge: state.draftEdge
-                ? { ...state.draftEdge, ...updates }
-                : null,
+            edges: state.edges.map((edge) =>
+                edge.id === id ? { ...edge, ...updates } : edge,
+            ),
         })),
+    removeEdge: (id) =>
+        set((state) => ({
+            edges: state.edges.filter((edge) => edge.id !== id),
+        })),
+
+    setDraftEdge: (draft) => set({ draftEdge: draft }),
+    setSelectedEdgeId: (id) => set({ selectedEdgeId: id }),
+    updateDraftEdge: (updates) =>
+        set((state) => {
+            if (!state.draftEdge) return { draftEdge: null };
+            return {
+                draftEdge: { ...state.draftEdge, ...updates },
+            };
+        }),
     removeDraftEdge: () => set({ draftEdge: null }),
 }));
