@@ -2,10 +2,10 @@ import { create } from "zustand";
 import type { NodeProps, NodeSize } from "../types/nodes";
 
 type DeepPartial<T> = T extends (...args: unknown[]) => unknown
-  ? T
-  : T extends object
-    ? { [P in keyof T]?: DeepPartial<T[P]> }
-    : T;
+    ? T
+    : T extends object
+      ? { [P in keyof T]?: DeepPartial<T[P]> }
+      : T;
 
 interface NodeState {
     nodes: NodeProps[];
@@ -23,7 +23,6 @@ interface NodeState {
 
     addNode: (node: NodeProps) => void;
     updateNode: (id: string, updates: DeepPartial<NodeProps>) => void;
-    rotateNode: (id: string, angleDelta?: number) => void;
     removeNode: (id: string) => void;
 }
 
@@ -43,31 +42,29 @@ export const useNodeStore = create<NodeState>((set) => ({
             },
             style: {
                 color: "#3b82f6",
-                border: { width: 1, color: "#1e40af" }
+                border: { width: 1, color: "#1e40af" },
             },
             value: {
                 header: "Planning",
-                text: "Deskripsi planning"
+                text: "Deskripsi planning",
             },
             state: {
                 isSelected: false,
                 isDragging: false,
                 isError: false,
                 isReadOnly: false,
-                zIndex: 1
+                zIndex: 1,
             },
             metadata: {
                 type: "default",
                 tags: ["start"],
                 version: 1,
-                updatedAt: Date.now()
+                updatedAt: Date.now(),
             },
-            ports: [
-                { id: "port-1", type: "output", pos: "right" }
-            ]
+            ports: [{ id: "port-1", type: "output", pos: "right" }],
         },
     ],
-    
+
     selectedNodeId: null,
     editingNodeId: null,
     draggedNodeId: null,
@@ -90,11 +87,33 @@ export const useNodeStore = create<NodeState>((set) => ({
                 const updated: NodeProps = {
                     ...n,
                     obj: updates.obj ? { ...n.obj, ...updates.obj } : n.obj,
-                    style: updates.style ? { ...n.style, ...updates.style } as NodeProps["style"] : n.style,
-                    value: updates.value ? { ...n.value, ...updates.value } as NodeProps["value"] : n.value,
-                    state: updates.state ? { ...n.state, ...updates.state } as NodeProps["state"] : n.state,
-                    metadata: updates.metadata ? { ...n.metadata, ...updates.metadata } as NodeProps["metadata"] : n.metadata,
-                    ports: updates.ports ? (updates.ports as NodeProps["ports"]) : n.ports,
+                    style: updates.style
+                        ? ({
+                              ...n.style,
+                              ...updates.style,
+                          } as NodeProps["style"])
+                        : n.style,
+                    value: updates.value
+                        ? ({
+                              ...n.value,
+                              ...updates.value,
+                          } as NodeProps["value"])
+                        : n.value,
+                    state: updates.state
+                        ? ({
+                              ...n.state,
+                              ...updates.state,
+                          } as NodeProps["state"])
+                        : n.state,
+                    metadata: updates.metadata
+                        ? ({
+                              ...n.metadata,
+                              ...updates.metadata,
+                          } as NodeProps["metadata"])
+                        : n.metadata,
+                    ports: updates.ports
+                        ? (updates.ports as NodeProps["ports"])
+                        : n.ports,
                 };
 
                 return updated;
@@ -105,34 +124,14 @@ export const useNodeStore = create<NodeState>((set) => ({
             //     const updatedNode = newNodes.find(n => n.id === id);
             //     if (updatedNode) {
             //         useEdgeStore.getState().updateConnectedEdges(
-            //             id, 
-            //             updatedNode.obj.x, 
-            //             updatedNode.obj.y, 
+            //             id,
+            //             updatedNode.obj.x,
+            //             updatedNode.obj.y,
             //             newNodes
             //         );
             //     }
             // }
 
-            return { nodes: newNodes };
-        }),
-
-    rotateNode: (id, angleDelta = 90) =>
-        set((state) => {
-            const newNodes = state.nodes.map((n) => {
-                if (n.id !== id) return n;
-                
-                const currentRotation = n.obj.rotation || 0;
-                const newRotation = (currentRotation + angleDelta) % 360;
-
-                return {
-                    ...n,
-                    obj: {
-                        ...n.obj,
-                        rotation: newRotation,
-                    },
-                };
-            });
-            
             return { nodes: newNodes };
         }),
 

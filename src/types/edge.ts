@@ -1,25 +1,26 @@
 import type { point, pos } from "./global";
 
-export type EdgeType = "bezier" | "straight" | "step"; 
+export type EdgeType = "bezier" | "straight" | "step";
 
-export interface EdgeMetadata {
-    animated: boolean;
-    label?: string;
+export interface dotPos {
+    nodeId: string;
+    nodeFace: pos;
+}
+
+export interface EdgetyleProps {
+    width: number;
     color: string;
-    style: "dashed" | "solid";
+    type: "solid" | "dashed" | "dotted";
 }
 
 export interface EdgeProps {
     id: string;
-    source: string;
-    target: string;
-    sourceHandle: pos;
-    targetHandle: pos;
-    
-    type: EdgeType;
-    waypoints: point[]; 
-    metadata: EdgeMetadata;
-    
-    isActive: boolean; 
-    isValid: boolean;
+    source: dotPos[];
+    target: dotPos[];
+    style?: EdgetyleProps;
+
+    type?: EdgeType;
+    waypoints: point[];
+
+    isActive?: boolean;
 }

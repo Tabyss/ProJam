@@ -1,9 +1,11 @@
 import { useEdgeStore, type Point } from "../../store/useEdgeStore";
+import { useNodeStore } from "../../store/useNodeStore";
+import { getDynamicWaypoints } from "../../utils/EdgeRouting";
+import useEdge from "../../hooks/useEdge";
 
 const createRoundedPath = (points: Point[], radius = 12): string => {
     if (points.length < 2) return "";
     let path = `M ${points[0].x} ${points[0].y}`;
-
     for (let i = 1; i < points.length - 1; i++) {
         const prev = points[i - 1];
         const curr = points[i];
@@ -42,7 +44,9 @@ const createRoundedPath = (points: Point[], radius = 12): string => {
 };
 
 export const Edge = () => {
-    const { edges, draftEdge } = useEdgeStore();
+    const { edges, draftEdge, selectedEdgeId } = useEdgeStore();
+    const { nodes } = useNodeStore();
+    const { handleEdgeTerminalMouseDown, handleEdgeMouseDown } = useEdge();
 
     return (
         <svg
@@ -56,23 +60,82 @@ export const Edge = () => {
                 pointerEvents: "none",
             }}
         >
-            {/* 1. RENDER EDGES PERMANEN */}
             {edges?.map((edge) => {
-                // Untuk edges permanen, kita asumsikan kamu punya logic
-                // untuk mendapatkan titik-titik jalurnya di store/store-utils
-                const points = edge.waypoints ?? [];
+                const sourceNode = nodes.find(
+                    (n) => n.id === edge.source[0].nodeId,
+                );
+                const targetNode = nodes.find(
+                    (n) => n.id === edge.target[0].nodeId,
+                );
+
+                if (!sourceNode || !targetNode) return null;
+
+                const points = getDynamicWaypoints(
+                    sourceNode,
+                    edge.source[0].nodeFace,
+                    targetNode,
+                    edge.target[0].nodeFace,
+                );
+
+                if (points.length < 2) return null;
+
+                const startPoint = points[0];
+                const endPoint = points[points.length - 1];
+
                 return (
-                    <path
+                    <g
                         key={edge.id}
-                        d={createRoundedPath(points)}
-                        stroke="#64748b"
-                        strokeWidth="2"
-                        fill="none"
-                    />
+                        pointerEvents="all"
+                        className="group"
+                        onMouseDown={(e) => handleEdgeMouseDown(e, edge)}
+                    >
+                        <path
+                            d={createRoundedPath(points)}
+                            stroke="#64748b"
+                            strokeWidth="2"
+                            fill="none"
+                            cursor="pointer"
+                        />
+                        {edge.id == selectedEdgeId && (
+                            <circle
+                                cx={startPoint.x}
+                                cy={startPoint.y}
+                                r={8}
+                                fill="#cbd5e1"
+                                stroke="#64748b"
+                                strokeWidth="2"
+                                style={{ cursor: "grab" }}
+                                onMouseDown={(e) =>
+                                    handleEdgeTerminalMouseDown(
+                                        e,
+                                        edge.id,
+                                        "source",
+                                    )
+                                }
+                            />
+                        )}
+                        {edge.id == selectedEdgeId && (
+                            <circle
+                                cx={endPoint.x}
+                                cy={endPoint.y}
+                                r={8}
+                                fill="#cbd5e1"
+                                stroke="#64748b"
+                                strokeWidth="2"
+                                style={{ cursor: "grab" }}
+                                onMouseDown={(e) =>
+                                    handleEdgeTerminalMouseDown(
+                                        e,
+                                        edge.id,
+                                        "target",
+                                    )
+                                }
+                            />
+                        )}
+                    </g>
                 );
             })}
 
-            {/* 2. RENDER DRAFT EDGE (STRUKTUR POINT TETAP SAMA) */}
             {draftEdge && (
                 <path
                     d={createRoundedPath(draftEdge.point)}

@@ -30,7 +30,7 @@ const MenuItem: React.FC<{ items: MenuItemProps; index: number }> = ({
                         return (
                             <button
                                 key={i}
-                                className={`shrink-0 size-7.5 place-items-center bg-base-50 ${colorClass[0]} text-[16px] rounded-[50px] transition duration-300 cursor-pointer`}
+                                className={`shrink-0 size-7.5 place-items-center bg-base-50 ${colorClass[0]} text-[16px] rounded-[50px] transition duration-300 cursor-pointer hover:bg-`}
                                 onClick={item.onClick}
                                 onMouseOver={(e) =>
                                     (e.currentTarget.style.transform =

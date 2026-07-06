@@ -1,33 +1,30 @@
 import { create } from "zustand";
 import type { pos } from "../types/global";
+import type { EdgeProps } from "../types/edge";
 
 export interface Point {
     x: number;
     y: number;
 }
-export interface Edge {
-    id: string;
-    source: string;
-    sourceHandle: pos;
-    target: string;
-    targetHandle: pos;
-    waypoints?: Point[];
-}
 
 export interface DraftEdge {
-    source: string;
+    sourceNodeId: string | number;
     sourceHandle: pos;
     point: Point[];
+    isReversing?: boolean;
 }
 
 interface EdgeState {
-    edges: Edge[];
+    edges: EdgeProps[];
     draftEdge: DraftEdge | null;
-
-    addEdge: (edge: Edge) => void;
-    updateEdge: (id: string, updates: Partial<Edge>) => void;
-
+    selectedEdgeId: string | null;
+    
+    addEdge: (edge: EdgeProps) => void;
+    updateEdge: (id: string, updates: Partial<EdgeProps>) => void;
+    removeEdge: (id: string) => void;
+    
     setDraftEdge: (draft: DraftEdge | null) => void;
+    setSelectedEdgeId: (id: string | null) => void;
     updateDraftEdge: (updates: Partial<DraftEdge>) => void;
     removeDraftEdge: () => void;
 }
@@ -35,6 +32,7 @@ interface EdgeState {
 export const useEdgeStore = create<EdgeState>((set) => ({
     edges: [],
     draftEdge: null,
+    selectedEdgeId: null,
 
     addEdge: (edge) => set((state) => ({ edges: [...state.edges, edge] })),
     updateEdge: (id, updates) =>
@@ -43,12 +41,16 @@ export const useEdgeStore = create<EdgeState>((set) => ({
                 edge.id === id ? { ...edge, ...updates } : edge,
             ),
         })),
+    removeEdge: (id) =>
+        set((state) => ({
+            edges: state.edges.filter((edge) => edge.id !== id),
+        })),
 
     setDraftEdge: (draft) => set({ draftEdge: draft }),
+    setSelectedEdgeId: (id) => set({ selectedEdgeId: id }),
     updateDraftEdge: (updates) =>
         set((state) => {
             if (!state.draftEdge) return { draftEdge: null };
-
             return {
                 draftEdge: { ...state.draftEdge, ...updates },
             };
