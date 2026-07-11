@@ -1,17 +1,24 @@
 import type { pos } from "./global";
 
-export type ShapeType = 
-    | "rectangle" 
-    | "circle" 
-    | "oval" 
-    | "parallelogram" 
-    | "trapezoid" 
-    | "diamond" 
+export type ShapeType =
+    | "rectangle"
+    | "circle"
+    | "oval"
+    | "parallelogram"
+    | "trapezoid"
+    | "diamond"
     | "triangle";
 
 export interface BorderStyle {
     width: number;
     color: string;
+    type: "solid" | "dashed";
+}
+export interface TextStyle {
+    size: number;
+    color: string
+    align: "left" | "center" | "right" ;
+    type: "bold" | "italic" | "normal";
 }
 
 export interface NodeSize {
@@ -25,6 +32,7 @@ export interface NodeSize {
 export interface NodeStyleProps {
     color: string;
     border: BorderStyle;
+    text: TextStyle;
 }
 
 export interface NodeObjProps {
@@ -44,8 +52,10 @@ export interface NodeValueProps {
 }
 
 export interface NodeStateProps {
+    isRich: boolean;
     isSelected: boolean;
     isDragging: boolean;
+    isfullfill: boolean;
     isError: boolean;
     isReadOnly: boolean;
     zIndex: number;

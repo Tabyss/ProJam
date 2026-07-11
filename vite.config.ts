@@ -6,6 +6,6 @@ import packageJson from "./package.json" with { type: "json" };
 export default defineConfig({
     plugins: [react(), tailwindcss()],
     define: {
-        __APP_VERSION__: JSON.stringify(packageJson.version),
+        'import.meta.env.VITE_APP_VERSION': JSON.stringify(packageJson.version),
     },
 });
