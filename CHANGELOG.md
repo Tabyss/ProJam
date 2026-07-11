@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/Tabyss/ProJam/compare/v1.2.0...v1.3.0) (2026-07-11)
+
+
+### Features
+
+* adjust theme and node styling ([f68aaf2](https://github.com/Tabyss/ProJam/commit/f68aaf27aebac8dfa5f4eb2d5b0689bbd10cb5fd))
+* adjust theme and node styling ([b737924](https://github.com/Tabyss/ProJam/commit/b737924bd9b1c7aac98d3a901f6c7dd9ceb91e33))
+
 ## [1.2.0](https://github.com/Tabyss/ProJam/compare/v1.1.0...v1.2.0) (2026-07-06)
 
 
