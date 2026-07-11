@@ -12,7 +12,7 @@ interface NodeTextProps {
     id: string;
     text: string;
     isEditing: boolean;
-    nodeHeight: number;
+    node: NodeProps;
     updateNode: (id: string, updates: DeepPartial<NodeProps>) => void;
     setEditingNodeId: (id: string | null) => void;
 }
@@ -21,7 +21,7 @@ const NodeText = ({
     id,
     text,
     isEditing,
-    nodeHeight,
+    node,
     updateNode,
     setEditingNodeId,
 }: NodeTextProps) => {
@@ -33,12 +33,12 @@ const NodeText = ({
             requestAnimationFrame(() => {
                 if (!containerRef.current) return;
                 const requiredHeight = containerRef.current.scrollHeight;
-                if (requiredHeight > nodeHeight) {
+                if (requiredHeight > node.obj.height) {
                     updateNode(id, { obj: { height: requiredHeight } });
                 }
             });
         }
-    }, [isEditing, text, nodeHeight, id, updateNode]);
+    }, [isEditing, text, node, id, updateNode]);
 
     const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const val = e.target.value;
@@ -50,7 +50,7 @@ const NodeText = ({
         target.style.height = "100%";
 
         const nextHeight = Math.max(MIN_HEIGHT, requiredHeight);
-        if (nextHeight !== nodeHeight) {
+        if (nextHeight !== node.obj.height) {
             updateNode(id, { obj: { height: nextHeight } });
         }
     };
@@ -58,7 +58,7 @@ const NodeText = ({
     return (
         <div
             ref={containerRef}
-            className="relative w-full h-full flex flex-col items-center justify-center p-3 font-bold overflow-hidden"
+            className="relative w-full h-full flex flex-col  font-bold overflow-hidden"
         >
             {isEditing ? (
                 <textarea
@@ -76,6 +76,10 @@ const NodeText = ({
                     onMouseDown={(e) => e.stopPropagation()}
                     placeholder="Ketik markdown..."
                     className="w-full h-full text-white text-base font-medium p-1 outline-none resize-none transition-colors bg-transparent border border-white/20 rounded"
+                    style={{
+                        color: node.style.text.color,
+                        textAlign: node.style.text.align
+                    }}
                 />
             ) : (
                 <div
@@ -83,7 +87,11 @@ const NodeText = ({
                         e.stopPropagation();
                         setEditingNodeId(id);
                     }}
-                    className="pointer-events-none max-w-full w-full flex flex-col items-start justify-center text-center overflow-hidden text-white"
+                    className="pointer-events-none max-w-full w-full flex flex-col items-start overflow-hidden text-white truncate"
+                    style={{
+                        color: node.style.text.color,
+                        textAlign: node.style.text.align
+                    }}
                 >
                     <ReactMarkdown
                         remarkPlugins={[remarkGfm]}

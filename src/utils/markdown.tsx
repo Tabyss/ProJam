@@ -3,24 +3,24 @@ import React from "react";
 export const markdownComponents = {
     h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
         <h1
-            className="text-2xl font-extrabold mb-2 mt-2 leading-tight w-full border-b border-white/20 pb-1"
+            className="text-2xl font-extrabold mb-2 mt-2 leading-tight w-full border-b border-white/20 pb-1 truncate"
             {...props}
         />
     ),
     h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
         <h2
-            className="text-xl font-bold mb-2 mt-2 leading-tight w-full"
+            className="text-xl font-bold mb-2 mt-2 leading-tight w-full truncate"
             {...props}
         />
     ),
     h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
         <h3
-            className="text-lg font-semibold mb-1 leading-tight w-full"
+            className="text-lg font-semibold mb-1 leading-tight w-full truncate"
             {...props}
         />
     ),
     p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
-        <p className="text-base mb-2 w-full font-medium" {...props} />
+        <p className="text-base w-full font-medium truncate" {...props} />
     ),
     strong: (props: React.HTMLAttributes<HTMLElement>) => (
         <strong className="font-extrabold text-blue-200" {...props} />

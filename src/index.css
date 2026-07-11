@@ -1,85 +1,231 @@
 @import "tailwindcss";
 
-/* 1. Mendaftarkan warna custom ke engine Tailwind v4 */
-/* Gunakan tanda hubung (-) agar class generate otomatis seperti bg-base-50, text-1-300, dll */
 @theme {
-    --color-base-50: rgb(255, 255, 255);
-    --color-base-100: rgb(224, 224, 224);
-    --color-base-200: rgb(192, 192, 192);
-    --color-base-300: rgb(160, 160, 160);
-    --color-base-400: rgb(128, 128, 128);
-    --color-base-500: rgb(96, 96, 96);
-    --color-base-600: rgb(64, 64, 64);
-    --color-base-700: rgb(48, 48, 48);
-    --color-base-800: rgb(32, 32, 32);
-    --color-base-900: rgb(0, 0, 0);
+  /* Primary (#a54b43) */
+  --color-primary-100: #f6dbd9;
+  --color-primary-200: #edb8b4;
+  --color-primary-300: #e0928c;
+  --color-primary-400: #c66f66;
+  --color-primary-500: #a54b43; /* Base */
+  --color-primary-600: #843c36;
+  --color-primary-700: #632d28;
+  --color-primary-800: #421e1b;
+  --color-primary-900: #210f0d;
 
-    --color-1-50: rgb(245, 239, 252);
-    --color-1-100: rgb(235, 223, 250);
-    --color-1-200: rgb(215, 190, 245);
-    --color-1-300: rgb(195, 158, 240);
-    --color-1-400: rgb(175, 125, 234);
-    --color-1-500: rgb(155, 93, 229);
-    --color-1-600: rgb(124, 74, 183);
-    --color-1-700: rgb(93, 56, 137);
-    --color-1-800: rgb(62, 37, 92);
-    --color-1-900: rgb(31, 19, 46);
+  /* Secondary (#e0a15e) */
+  --color-secondary-100: #fbf0e3;
+  --color-secondary-200: #f6dfc2;
+  --color-secondary-300: #f0cba0;
+  --color-secondary-400: #e8b67f;
+  --color-secondary-500: #e0a15e; /* Base */
+  --color-secondary-600: #b3814b;
+  --color-secondary-700: #866138;
+  --color-secondary-800: #5a4026;
+  --color-secondary-900: #2d2013;
 
-    --color-2-50: rgb(254, 239, 248);
-    --color-2-100: rgb(252, 222, 240);
-    --color-2-200: rgb(249, 189, 226);
-    --color-2-300: rgb(247, 157, 211);
-    --color-2-400: rgb(244, 124, 196);
-    --color-2-500: rgb(241, 91, 181);
-    --color-2-600: rgb(193, 73, 145);
-    --color-2-700: rgb(145, 55, 109);
-    --color-2-800: rgb(96, 36, 72);
-    --color-2-900: rgb(48, 18, 36);
+  /* Accent (#658963) */
+  --color-accent-100: #e5ede4;
+  --color-accent-200: #c6d9c4;
+  --color-accent-300: #a6c5a3;
+  --color-accent-400: #85b083;
+  --color-accent-500: #658963; /* Base */
+  --color-accent-600: #516e4f;
+  --color-accent-700: #3d523b;
+  --color-accent-800: #283728;
+  --color-accent-900: #141b14;
 
-    --color-3-50: rgb(255, 252, 236);
-    --color-3-100: rgb(255, 250, 217);
-    --color-3-200: rgb(255, 244, 179);
-    --color-3-300: rgb(254, 239, 140);
-    --color-3-400: rgb(254, 233, 102);
-    --color-3-500: rgb(254, 228, 64);
-    --color-3-600: rgb(203, 182, 51);
-    --color-3-700: rgb(152, 137, 38);
-    --color-3-800: rgb(102, 91, 26);
-    --color-3-900: rgb(51, 46, 13);
+  /* Background (#969696) */
+  --color-background-100: #ebebeb;
+  --color-background-200: #d6d6d6;
+  --color-background-300: #c2c2c2;
+  --color-background-400: #adadad;
+  --color-background-500: #969696; /* Base */
+  --color-background-600: #787878;
+  --color-background-700: #5a5a5a;
+  --color-background-800: #3c3c3c;
+  --color-background-900: #1e1e1e;
 
-    --color-4-50: rgb(230, 248, 254);
-    --color-4-100: rgb(204, 241, 254);
-    --color-4-200: rgb(153, 228, 252);
-    --color-4-300: rgb(102, 214, 250);
-    --color-4-400: rgb(51, 201, 249);
-    --color-4-500: rgb(0, 187, 249);
-    --color-4-600: rgb(0, 150, 199);
-    --color-4-700: rgb(0, 112, 149);
-    --color-4-800: rgb(0, 75, 100);
-    --color-4-900: rgb(0, 37, 50);
-
-    --color-5-50: rgb(230, 254, 251);
-    --color-5-100: rgb(204, 253, 246);
-    --color-5-200: rgb(153, 251, 238);
-    --color-5-300: rgb(102, 249, 229);
-    --color-5-400: rgb(51, 247, 221);
-    --color-5-500: rgb(0, 245, 212);
-    --color-5-600: rgb(0, 196, 170);
-    --color-5-700: rgb(0, 147, 127);
-    --color-5-800: rgb(0, 98, 85);
-    --color-5-900: rgb(0, 49, 42);
+  /* Text (#1a1a1a) */
+  --color-text-100: #d1d1d1;
+  --color-text-200: #a3a3a3;
+  --color-text-300: #757575;
+  --color-text-400: #474747;
+  --color-text-500: #1a1a1a; /* Base */
+  --color-text-600: #151515;
+  --color-text-700: #101010;
+  --color-text-800: #0a0a0a;
+  --color-text-900: #050505;
 }
 
-/* 2. Setup untuk Elemen Dasar (Light Mode Default) */
-@layer base {
-    :root {
-        --canvas-bg: var(--color-base-50);
-        --content-text: var(--color-base-900);
-    }
 
-    body {
-        background-color: var(--canvas-bg);
-        color: var(--content-text);
-        @apply antialiased transition-colors duration-300;
-    }
+[data-theme="theme1"] {
+    /* Primary (#a54b43) */
+  --color-primary-100: #f6dbd9;
+  --color-primary-200: #edb8b4;
+  --color-primary-300: #e0928c;
+  --color-primary-400: #c66f66;
+  --color-primary-500: #a54b43; /* Base */
+  --color-primary-600: #843c36;
+  --color-primary-700: #632d28;
+  --color-primary-800: #421e1b;
+  --color-primary-900: #210f0d;
+
+  /* Secondary (#e0a15e) */
+  --color-secondary-100: #fbf0e3;
+  --color-secondary-200: #f6dfc2;
+  --color-secondary-300: #f0cba0;
+  --color-secondary-400: #e8b67f;
+  --color-secondary-500: #e0a15e; /* Base */
+  --color-secondary-600: #b3814b;
+  --color-secondary-700: #866138;
+  --color-secondary-800: #5a4026;
+  --color-secondary-900: #2d2013;
+
+  /* Accent (#658963) */
+  --color-accent-100: #e5ede4;
+  --color-accent-200: #c6d9c4;
+  --color-accent-300: #a6c5a3;
+  --color-accent-400: #85b083;
+  --color-accent-500: #658963; /* Base */
+  --color-accent-600: #516e4f;
+  --color-accent-700: #3d523b;
+  --color-accent-800: #283728;
+  --color-accent-900: #141b14;
+
+  /* Background (#969696) */
+  --color-background-100: #ebebeb;
+  --color-background-200: #d6d6d6;
+  --color-background-300: #c2c2c2;
+  --color-background-400: #adadad;
+  --color-background-500: #969696; /* Base */
+  --color-background-600: #787878;
+  --color-background-700: #5a5a5a;
+  --color-background-800: #3c3c3c;
+  --color-background-900: #1e1e1e;
+
+  /* Text (#1a1a1a) */
+  --color-text-100: #d1d1d1;
+  --color-text-200: #a3a3a3;
+  --color-text-300: #757575;
+  --color-text-400: #474747;
+  --color-text-500: #1a1a1a; /* Base */
+  --color-text-600: #151515;
+  --color-text-700: #101010;
+  --color-text-800: #0a0a0a;
+  --color-text-900: #050505;
+}
+
+[data-theme="theme2"] {
+  /* Primary (#fda565) */
+  --color-primary-100: #ffecd9;
+  --color-primary-200: #ffd8b3;
+  --color-primary-300: #ffc48c;
+  --color-primary-400: #ffaf66;
+  --color-primary-500: #fda565; /* Base */
+  --color-primary-600: #ca8451;
+  --color-primary-700: #98633d;
+  --color-primary-800: #654228;
+  --color-primary-900: #332114;
+
+  /* Secondary (#fd56b2) */
+  --color-secondary-100: #ffddf0;
+  --color-secondary-200: #ffbce1;
+  --color-secondary-300: #ff9ad2;
+  --color-secondary-400: #ff79c3;
+  --color-secondary-500: #fd56b2; /* Base */
+  --color-secondary-600: #ca458e;
+  --color-secondary-700: #98346b;
+  --color-secondary-800: #652247;
+  --color-secondary-900: #331124;
+
+  /* Accent (#00e6fd) */
+  --color-accent-100: #ccfbff;
+  --color-accent-200: #99f7ff;
+  --color-accent-300: #66f3ff;
+  --color-accent-400: #33efff;
+  --color-accent-500: #00e6fd; /* Base */
+  --color-accent-600: #00b8ca;
+  --color-accent-700: #008a98;
+  --color-accent-800: #005c65;
+  --color-accent-900: #002e33;
+
+  /* Background (#000523) */
+  --color-background-100: #b3b6c2;
+  --color-background-200: #80869d;
+  --color-background-300: #4d5779;
+  --color-background-400: #1a2754;
+  --color-background-500: #000523; /* Base */
+  --color-background-600: #00041c;
+  --color-background-700: #000315;
+  --color-background-800: #00020e;
+  --color-background-900: #000107;
+
+  /* Text (#bd51fc) */
+  --color-text-100: #efdaff;
+  --color-text-200: #dfb6ff;
+  --color-text-300: #ce91ff;
+  --color-text-400: #be6dff;
+  --color-text-500: #bd51fc; /* Base */
+  --color-text-600: #9741ca;
+  --color-text-700: #713197;
+  --color-text-800: #4c2065;
+  --color-text-900: #261032;
+}
+
+
+[data-theme="theme3"] {
+  /* Primary (#12676a) */
+  --color-primary-100: #cfe7e8;
+  --color-primary-200: #9fcdd0;
+  --color-primary-300: #6fb2b7;
+  --color-primary-400: #3f989e;
+  --color-primary-500: #12676a; /* Base */
+  --color-primary-600: #0e5255;
+  --color-primary-700: #0b3e40;
+  --color-primary-800: #07292a;
+  --color-primary-900: #041515;
+
+  /* Secondary (#0f9596) */
+  --color-secondary-100: #cff0f1;
+  --color-secondary-200: #9fe2e3;
+  --color-secondary-300: #6fd3d5;
+  --color-secondary-400: #3fc4c6;
+  --color-secondary-500: #0f9596; /* Base */
+  --color-secondary-600: #0c7778;
+  --color-secondary-700: #09595a;
+  --color-secondary-800: #063c3c;
+  --color-secondary-900: #031e1e;
+
+  /* Accent (#f2542d) */
+  --color-accent-100: #fcdcd5;
+  --color-accent-200: #f9baac;
+  --color-accent-300: #f69782;
+  --color-accent-400: #f47558;
+  --color-accent-500: #f2542d; /* Base */
+  --color-accent-600: #c24324;
+  --color-accent-700: #91321b;
+  --color-accent-800: #612212;
+  --color-accent-900: #301109;
+
+  /* Background (#f6dfbd) */
+  --color-background-100: #fdf5e9;
+  --color-background-200: #fbeadd;
+  --color-background-300: #f9e2cf;
+  --color-background-400: #f7e0c6;
+  --color-background-500: #f6dfbd; /* Base */
+  --color-background-600: #c5b297;
+  --color-background-700: #948671;
+  --color-background-800: #62594c;
+  --color-background-900: #312c26;
+
+  /* Text (#562c2d) */
+  --color-text-100: #e5dadb;
+  --color-text-200: #cbb5b6;
+  --color-text-300: #b08f92;
+  --color-text-400: #966a6d;
+  --color-text-500: #562c2d; /* Base */
+  --color-text-600: #452324;
+  --color-text-700: #341a1b;
+  --color-text-800: #221212;
+  --color-text-900: #110909;
 }

@@ -63,8 +63,8 @@ export const useCanvas = () => {
                 const newH = startH + (e.clientY - startY) / scale;
                 updateNode(id, {
                     obj: {
-                        width: Math.max(100, newW),
-                        height: Math.max(50, newH),
+                        width: Math.max(80, newW),
+                        height: Math.max(40, newH),
                     },
                 });
             }

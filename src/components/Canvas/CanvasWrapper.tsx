@@ -12,6 +12,8 @@ const CanvasWrapper = ({ children }: { children: React.ReactNode }) => {
         handleCanvasMouseUp,
     } = useCanvas();
 
+    const dotSize = 1 * scale;
+
     return (
         <div
             onWheel={handleWheel}
@@ -19,11 +21,11 @@ const CanvasWrapper = ({ children }: { children: React.ReactNode }) => {
             onMouseMove={handleMouseMove}
             onMouseUp={handleCanvasMouseUp}
             onMouseLeave={handleCanvasMouseUp}
-            className={`flex-1 relative overflow-hidden bg-base-50 w-full h-full ${
+            className={`flex-1 relative overflow-hidden bg-background-500 w-full h-full ${
                 isPanning ? "cursor-grabbing" : "cursor-default"
             }`}
             style={{
-                backgroundImage: "radial-gradient(var(--color-base-100) 1.5px, transparent 1.5px)",
+                backgroundImage: `radial-gradient(var(--color-text-300) ${dotSize}px, transparent ${dotSize}px)`,
                 backgroundSize: `${20 * scale}px ${20 * scale}px`,
                 backgroundPosition: `${coord.x}px ${coord.y}px`,
             }}
