@@ -1,4 +1,3 @@
-// Fungsi untuk mengganti tema
 export type theme = "theme1" | "theme2" | "theme3";
 
 export function setTheme(themeName: theme) {

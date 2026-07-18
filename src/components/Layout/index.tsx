@@ -1,6 +1,6 @@
 import { useNodeStore } from "../../store/useNodeStore";
 import CanvasWrapper from "../Canvas/CanvasWrapper";
-import { Edge } from "../Canvas/Edge";
+import { Edge } from "../Canvas/Edge/Edge";
 import Node from "../Canvas/Node/Node";
 import Header from "./Header/Header";
 import Menu from "./Menu/Menu";

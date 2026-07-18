@@ -44,8 +44,7 @@ const Node = ({ node }: { node: NodeProps }) => {
 
     const { draftEdge } = useEdgeStore();
 
-    const { handleResizeMouseDown, handleNodeMouseDown, handleNodeMouseUp } =
-        useNodes();
+    const { handleResizeMouseDown, handleNodeMouseUp } = useNodes();
 
     const { handleConnectorMouseDown, handleConnectorMouseUp } = useEdge();
 
@@ -69,7 +68,10 @@ const Node = ({ node }: { node: NodeProps }) => {
             <div
                 onMouseEnter={() => setHoveredDot(pos)}
                 onMouseLeave={() => setHoveredDot(null)}
-                onMouseDown={(e) => handleConnectorMouseDown(e, node, pos)}
+                onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleConnectorMouseDown(e, node, pos);
+                }}
                 onMouseUp={(e) =>
                     handleConnectorMouseUp &&
                     handleConnectorMouseUp(e, node, pos)
@@ -91,7 +93,12 @@ const Node = ({ node }: { node: NodeProps }) => {
     return (
         <div
             key={node.id}
-            onMouseDown={(e) => handleNodeMouseDown(e, node)}
+            onMouseDown={(e) => {
+                e.preventDefault();
+                if (selectedNodeId) {
+                    handleResizeMouseDown(e, node);
+                }
+            }}
             onMouseUp={(e) => handleNodeMouseUp(e, node)}
             onMouseEnter={() => setIsNodeHovered(true)}
             onMouseLeave={() => setIsNodeHovered(false)}
@@ -110,9 +117,7 @@ const Node = ({ node }: { node: NodeProps }) => {
                 isDragged ? "cursor-grabbing" : "cursor-grab"
             }`}
         >
-            {isSelected && (
-                <NodeMenu node={node} updateNode={updateNode} />
-            )}
+            {isSelected && <NodeMenu node={node} updateNode={updateNode} />}
             <div
                 className={`absolute inset-0 ${
                     isDragged
@@ -122,7 +127,7 @@ const Node = ({ node }: { node: NodeProps }) => {
                 style={{
                     backgroundColor: node.style.color,
                     border: `2px ${node.style.border.type}`,
-                    borderColor: node.style.border.color
+                    borderColor: node.style.border.color,
                 }}
             />
 
@@ -135,7 +140,7 @@ const Node = ({ node }: { node: NodeProps }) => {
                             color: node.style.color,
                         }}
                         onClick={(e) => {
-                            e.preventDefault()
+                            e.preventDefault();
                             updateNode(node.id, {
                                 state: { isfullfill: !node.state.isfullfill },
                             });
@@ -168,9 +173,12 @@ const Node = ({ node }: { node: NodeProps }) => {
             {/* Handle Resize */}
             {(!node.state.isRich || node.state.isfullfill) && (
                 <div
-                    onMouseDown={(e) =>
-                        selectedNodeId && handleResizeMouseDown(e, node)
-                    }
+                    onMouseDown={(e) => {
+                        e.preventDefault();
+                        if (selectedNodeId) {
+                            handleResizeMouseDown(e, node);
+                        }
+                    }}
                     className={`absolute -right-4 -bottom-4 size-3.5 ${
                         selectedNodeId ? "cursor-nwse-resize" : ""
                     } bg-text-400 rounded-md z-10 ${

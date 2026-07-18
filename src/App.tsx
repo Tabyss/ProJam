@@ -1,5 +1,6 @@
 import Layout from "./components/Layout";
 import useKeyboard from "./hooks/useKeyboard";
+import './App.css'
 
 export default function App() {
     useKeyboard();

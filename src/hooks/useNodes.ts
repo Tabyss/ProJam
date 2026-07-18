@@ -6,9 +6,12 @@ import type { pos } from "../types/global";
 
 const useNodes = () => {
     const { coord, scale } = useCanvasStore();
-    const { draftEdge, addEdge, setSelectedEdgeId, removeDraftEdge } = useEdgeStore();
+    const { draftEdge, addEdge, setSelectedEdgeId, removeDraftEdge } =
+        useEdgeStore();
     const {
+        selectedNodeId,
         setSelectedNodeId,
+        setEditingNodeId,
         setDraggedNodeId,
         setResizingNode,
         setNodeOffset,
@@ -16,9 +19,17 @@ const useNodes = () => {
 
     const handleNodeMouseDown = (e: React.MouseEvent, node: NodeProps) => {
         e.stopPropagation();
-        setSelectedNodeId(node.id);
+
+        if (selectedNodeId === node.id) {
+            setEditingNodeId(node.id);
+        } else {
+            setSelectedNodeId(node.id);
+            setEditingNodeId(null);
+        }
+
         setDraggedNodeId(node.id);
-        setSelectedEdgeId(null)
+        setSelectedEdgeId(null);
+
         setNodeOffset(
             (e.clientX - coord.x) / scale - node.obj.x,
             (e.clientY - coord.y) / scale - node.obj.y,
