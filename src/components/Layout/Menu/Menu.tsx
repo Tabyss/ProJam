@@ -228,12 +228,13 @@ export default function Menu() {
     ];
 
     return (
-        <div className="fixed bottom-7 right-7 z-1000">
+        <div className="fixed right-7 top-[50%] translate-y-[-50%] z-1000 flex flex-col items-end gap-4">
             <SetTheme />
-            <div className=" flex flex-row-reverse items-start">
+
+            <div className="flex flex-row-reverse items-start">
                 <div className="p-1 h-max bg-text-500 rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.3)] flex flex-col gap-1.5">
-                    {menuConfig.map((menu) => (
-                        <MenuItem items={menu} />
+                    {menuConfig.map((menu, index) => (
+                        <MenuItem key={index} items={menu} />
                     ))}
                 </div>
             </div>

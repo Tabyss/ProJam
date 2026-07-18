@@ -47,7 +47,7 @@ export const useNodeStore = create<NodeState>((set) => ({
                     color: "var(--color-secondary-500)",
                     type: "solid",
                 },
-                text: { size: 16, align: "center", type: "normal", color: "var(--color-primary-500)", },
+                text: { size: 16, align: "center", type: "normal", color: "var(--color-secondary-500)", },
             },
             value: {
                 header: "Planning",

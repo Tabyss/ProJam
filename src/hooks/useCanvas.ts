@@ -27,9 +27,16 @@ export const useCanvas = () => {
         nodeOffset,
     } = useNodeStore();
 
-    const { draftEdge, selectedEdgeId, setDraftEdge, setSelectedEdgeId } =
-        useEdgeStore();
-    const { handleEdgeMouseMove } = useEdge();
+    const { 
+        draftEdge, 
+        selectedEdgeId, 
+        draggedSegment,      
+        setDraftEdge, 
+        setSelectedEdgeId,
+        setDraggedSegment,   
+    } = useEdgeStore();
+    
+    const { handleEdgeMouseMove, handleSegmentMouseMove } = useEdge(); 
 
     const handlePanning = useCallback(
         (e: React.MouseEvent) => {
@@ -94,7 +101,6 @@ export const useCanvas = () => {
             setPanStart({ x: e.clientX - coord.x, y: e.clientY - coord.y });
 
             if (selectedNodeId) setSelectedNodeId(null);
-
             if (selectedEdgeId) setSelectedEdgeId(null);
         },
         [
@@ -113,16 +119,19 @@ export const useCanvas = () => {
             if (isPanning) return handlePanning(e);
             if (draggedNodeId) return handleNodeDragging(e);
             if (resizingNode) return handleNodeResizing(e);
+            if (draggedSegment) return handleSegmentMouseMove(e);
             if (draftEdge) return handleEdgeMouseMove(e);
         },
         [
             isPanning,
             draggedNodeId,
             resizingNode,
+            draggedSegment, 
             draftEdge,
             handlePanning,
             handleNodeDragging,
             handleNodeResizing,
+            handleSegmentMouseMove,
             handleEdgeMouseMove,
         ],
     );
@@ -132,7 +141,14 @@ export const useCanvas = () => {
         setDraggedNodeId(null);
         setResizingNode(null);
         setDraftEdge(null);
-    }, [setIsPanning, setDraggedNodeId, setResizingNode, setDraftEdge]);
+        if (setDraggedSegment) setDraggedSegment(null);
+    }, [
+        setIsPanning, 
+        setDraggedNodeId, 
+        setResizingNode, 
+        setDraftEdge, 
+        setDraggedSegment 
+    ]);
 
     return {
         handleWheel,

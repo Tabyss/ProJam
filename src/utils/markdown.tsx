@@ -1,102 +1,54 @@
-import React from "react";
+import React from 'react';
 
-export const markdownComponents = {
-    h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
-        <h1
-            className="text-2xl font-extrabold mb-2 mt-2 leading-tight w-full border-b border-white/20 pb-1 truncate"
-            {...props}
-        />
-    ),
-    h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
-        <h2
-            className="text-xl font-bold mb-2 mt-2 leading-tight w-full truncate"
-            {...props}
-        />
-    ),
-    h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
-        <h3
-            className="text-lg font-semibold mb-1 leading-tight w-full truncate"
-            {...props}
-        />
-    ),
-    p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
-        <p className="text-base w-full font-medium truncate" {...props} />
-    ),
-    strong: (props: React.HTMLAttributes<HTMLElement>) => (
-        <strong className="font-extrabold text-blue-200" {...props} />
-    ),
-    em: (props: React.HTMLAttributes<HTMLElement>) => (
-        <em className="italic text-slate-200" {...props} />
-    ),
-    del: (props: React.HTMLAttributes<HTMLElement>) => (
-        <del className="line-through text-slate-400" {...props} />
-    ),
-    a: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-        <a
-            className="text-blue-300 hover:text-blue-100 underline decoration-blue-400/50 underline-offset-2"
-            target="_blank"
-            rel="noopener noreferrer"
-            {...props}
-        />
-    ),
-    blockquote: (props: React.BlockquoteHTMLAttributes<HTMLQuoteElement>) => (
-        <blockquote
-            className="border-l-4 border-blue-400 pl-3 my-2 italic bg-black/10 py-1 rounded-r w-full text-sm"
-            {...props}
-        />
-    ),
-    ul: ({ className, ...props }: React.HTMLAttributes<HTMLUListElement>) => (
-        <ul
-            className={`list-outside pl-5 mb-2 w-full ${className?.includes("contains-task-list") ? "list-none pl-1" : "list-disc"}`}
-            {...props}
-        />
-    ),
-    ol: (props: React.HTMLAttributes<HTMLOListElement>) => (
-        <ol className="list-decimal list-outside pl-5 mb-2 w-full" {...props} />
-    ),
-    li: ({ className, ...props }: React.LiHTMLAttributes<HTMLLIElement>) => (
-        <li
-            className={`mb-1 ${className?.includes("task-list-item") ? "flex items-center gap-2" : ""}`}
-            {...props}
-        />
-    ),
-    input: (props: React.InputHTMLAttributes<HTMLInputElement>) => {
-        if (props.type === "checkbox") {
-            return (
-                <input
-                    type="checkbox"
-                    className="w-4 h-4 rounded text-blue-500 bg-black/30 border-white/40 focus:ring-blue-400 pointer-events-none"
-                    disabled
-                    {...props}
-                />
-            );
-        }
-        return <input {...props} />;
-    },
-    pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
-        <pre
-            className="inline-block bg-[#1e1e1e] rounded px-1.5 py-0.5 text-sm font-mono text-blue-300 border border-white/10 mx-0.5 align-middle"
-            {...props}
-        />
-    ),
-    code: ({
-        inline,
-        className,
-        ...props
-    }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) => {
-        if (inline) {
-            return (
-                <code
-                    className="bg-black/30 rounded px-1.5 py-0.5 text-sm font-mono text-pink-300 border border-white/5"
-                    {...props}
-                />
-            );
-        }
-        return (
-            <code className={`text-blue-300 ${className || ""}`} {...props} />
-        );
-    },
-    hr: (props: React.HTMLAttributes<HTMLHRElement>) => (
-        <hr className="w-full my-4 border-white/20" {...props} />
-    ),
+const styleMap = {
+  h1: "text-3xl font-bold text-white my-3",
+  h2: "text-2xl font-bold text-white my-2",
+  h3: "text-xl font-bold text-white my-2",
+  p: "text-white my-1 leading-relaxed",
+  li: "text-white ml-6 list-disc",
+  liNum: "text-white ml-6 list-decimal",
+  blockquote: "border-l-4 border-gray-500 pl-4 italic text-gray-300 my-2",
+  strong: "font-bold text-blue-300",
+  em: "italic text-gray-300"
+};
+
+const parseInline = (text: string) => {
+  // Regex menangkap **bold** atau *italic*
+  const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+  
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) 
+      return <strong key={i} className={styleMap.strong}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith('*') && part.endsWith('*')) 
+      return <em key={i} className={styleMap.em}>{part.slice(1, -1)}</em>;
+    return part;
+  });
+};
+
+export const parseMarkdownToReact = (text: string): React.ReactNode[] => {
+  return text.split('\n').map((line, index) => {
+    const trimmed = line.trim();
+
+    // 1. Heading
+    if (line.startsWith('# ')) return <h1 key={index} className={styleMap.h1}>{parseInline(line.slice(2))}</h1>;
+    if (line.startsWith('## ')) return <h2 key={index} className={styleMap.h2}>{parseInline(line.slice(3))}</h2>;
+    if (line.startsWith('### ')) return <h3 key={index} className={styleMap.h3}>{parseInline(line.slice(4))}</h3>;
+    
+    // 2. Blockquote
+    if (line.startsWith('> ')) return <blockquote key={index} className={styleMap.blockquote}>{parseInline(line.slice(2))}</blockquote>;
+    
+    // 3. Bullet List
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) 
+      return <li key={index} className={styleMap.li}>{parseInline(trimmed.slice(2))}</li>;
+    
+    // 4. Number List (regex untuk menangkap "1. ")
+    if (/^\d+\.\s/.test(trimmed)) 
+      return <li key={index} className={styleMap.liNum}>{parseInline(trimmed.replace(/^\d+\.\s/, ''))}</li>;
+    
+    // 5. Empty line (br)
+    if (trimmed === '') return <br key={index} />;
+
+    // 6. Paragraf biasa
+    return <p key={index} className={styleMap.p}>{parseInline(line)}</p>;
+  });
 };

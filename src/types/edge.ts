@@ -7,7 +7,7 @@ export interface dotPos {
     nodeFace: pos;
 }
 
-export interface EdgetyleProps {
+export interface EdgeStyleProps {
     width: number;
     color: string;
     type: "solid" | "dashed" | "dotted";
@@ -17,7 +17,7 @@ export interface EdgeProps {
     id: string;
     source: dotPos[];
     target: dotPos[];
-    style?: EdgetyleProps;
+    style?: EdgeStyleProps;
 
     type?: EdgeType;
     waypoints: point[];
