@@ -1,8 +1,6 @@
-import ReactMarkdown from "react-markdown";
 import { useRef, useLayoutEffect } from "react";
-import remarkGfm from "remark-gfm";
-import { markdownComponents } from "../../../utils/markdown";
 import type { NodeProps } from "../../../types/nodes";
+import { parseMarkdownToReact } from "../../../utils/markdown";
 
 type DeepPartial<T> = {
     [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
@@ -58,7 +56,7 @@ const NodeText = ({
     return (
         <div
             ref={containerRef}
-            className="relative w-full h-full flex flex-col  font-bold overflow-hidden"
+            className="relative w-full h-full flex flex-col justify-center font-bold overflow-hidden cursor-pointer"
         >
             {isEditing ? (
                 <textarea
@@ -68,37 +66,28 @@ const NodeText = ({
                     onBlur={() => setEditingNodeId(null)}
                     onKeyDown={(e) => {
                         e.stopPropagation();
-                        if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            setEditingNodeId(null);
-                        }
                     }}
                     onMouseDown={(e) => e.stopPropagation()}
-                    placeholder="Ketik markdown..."
-                    className="w-full h-full text-white text-base font-medium p-1 outline-none resize-none transition-colors bg-transparent border border-white/20 rounded"
+                    placeholder="Ketik sesuatu..."
+                    className="w-full h-full text-base font-medium p-1 outline-none resize-none transition-colors bg-transparent rounded"
                     style={{
                         color: node.style.text.color,
-                        textAlign: node.style.text.align
+                        textAlign: node.style.text.align,
+                        fontSize: node.style.text.size,
                     }}
                 />
             ) : (
                 <div
-                    onDoubleClick={(e) => {
-                        e.stopPropagation();
-                        setEditingNodeId(id);
-                    }}
-                    className="pointer-events-none max-w-full w-full flex flex-col items-start overflow-hidden text-white truncate"
+                    className="markdown-node-content max-w-full w-full h-full flex flex-col items-center justify-center overflow-y-auto text-white wrap-break-word"
                     style={{
                         color: node.style.text.color,
-                        textAlign: node.style.text.align
+                        textAlign: node.style.text.align,
+                        fontSize: node.style.text.size,
                     }}
                 >
-                    <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={markdownComponents}
-                    >
-                        {text}
-                    </ReactMarkdown>
+                    <div className="w-full h-full overflow-y-auto">
+                        {parseMarkdownToReact(text)}
+                    </div>
                 </div>
             )}
         </div>

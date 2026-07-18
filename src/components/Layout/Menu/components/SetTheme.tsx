@@ -10,7 +10,7 @@ const SetTheme = () => {
     }, [activeTheme]);
 
     return (
-        <div className="group flex flex-col-reverse items-end mb-2 p-1 gap-2 relative">
+        <div className="group flex flex-col-reverse items-end p-1 gap-2 relative">
             <button
                 data-theme={activeTheme}
                 title="Tema Aktif"
@@ -21,7 +21,7 @@ const SetTheme = () => {
                 }}
             />
 
-            <div className="flex flex-col items-center gap-2 opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 ease-out">
+            <div className="absolute top-0 right-0 flex items-center p-1 gap-2 opacity-0 translate-x-0 pointer-events-none group-hover:opacity-100 group-hover:-translate-x-9 group-hover:pointer-events-auto transition-all duration-300 ease-out">
                 {AVAILABLE_THEMES.filter((t) => t !== activeTheme).map(
                     (theme) => (
                         <button

@@ -1,19 +1,12 @@
 import { useState } from "react";
-import type { NodeProps } from "../../../types/nodes";
-import {
-    FaFill,
-    FaBorderAll,
-    FaFont,
-    FaAlignLeft,
-    FaAlignCenter,
-    FaAlignRight,
-} from "react-icons/fa";
 import { getThemePalette } from "../../../utils/colors";
 import { LuCircle, LuCircleDashed, LuCircleDotDashed } from "react-icons/lu";
+import type { EdgeProps, EdgeStyleProps } from "../../../types/edge";
+import { TbLine } from "react-icons/tb";
 
-interface NodeMenuProps {
-    node: NodeProps;
-    updateNode: (id: string, data: Partial<NodeProps>) => void;
+interface EdgeMenuProps {
+    edge: EdgeProps;
+    updateEdge: (id: string, data: Partial<EdgeProps>) => void;
 }
 
 interface PickerProps {
@@ -38,17 +31,13 @@ const ColorPicker = ({
         <div className="relative flex items-center">
             <button
                 type="button"
-                className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-text-200"
+                className="w-6 h-6 rounded-md border border-text-500 shadow-sm hover:border-text-300"
+                style={{ backgroundColor: value }}
                 onClick={(e) => {
                     e.preventDefault();
                     onToggle();
                 }}
-            >
-                <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: value }}
-                />
-            </button>
+            />
 
             {isOpen && (
                 <div
@@ -94,7 +83,11 @@ const DropdownPicker = ({
         <div className="relative flex content-center">
             <button
                 type="button"
-                className="w-6 h-6 text-sm rounded-md bg-text-100 border border-text-500 cursor-pointer outline-none flex items-center justify-center hover:bg-text-400"
+                className="w-6 h-6 text-sm rounded-md border border-text-500 cursor-pointer outline-none flex items-center justify-center hover:bg-text-400 hover:border-text-300 "
+                style={{
+                    backgroundColor:`var(${isOpen ? "--color-text-500" : "--color-text-100"})`,
+                    color:`var(${isOpen ? "--color-text-100" : "--color-text-500"})`
+                }}
                 onClick={(e) => {
                     e.preventDefault();
                     onToggle();
@@ -149,7 +142,7 @@ const RangePicker = ({
     return (
         <div className="relative flex items-center">
             <input
-                className="text-xs border border-text-500 rounded p-1 px-2 bg-text-100 cursor-pointer outline-none hover:border-text-100 w-8"
+                className="text-xs border border-text-500 rounded p-1 px-2 bg-text-100 cursor-pointer outline-none hover:border-text-300 w-8 h-6"
                 onClick={(e) => {
                     e.preventDefault();
                     onToggle();
@@ -159,7 +152,7 @@ const RangePicker = ({
 
             {isOpen && (
                 <div
-                    className="absolute bottom-10 mt-2 left-1/2 -translate-x-1/2 bg-text-300 p-3 rounded-md shadow-lg z-60 flex flex-col items-center gap-2"
+                    className="absolute bottom-10 mt-2 left-1/2 -translate-x-1/2 bg-text-100 p-3 rounded-md shadow-lg z-60 flex flex-col items-center gap-2"
                     onMouseLeave={onClose}
                 >
                     <input
@@ -176,8 +169,14 @@ const RangePicker = ({
     );
 };
 
-const NodeMenu = ({ node, updateNode }: NodeMenuProps) => {
+const EdgeMenu = ({ edge, updateEdge }: EdgeMenuProps) => {
     const [activeMenu, setActiveMenu] = useState<string | null>(null);
+
+    const edgeStyle: EdgeStyleProps = edge.style ?? {
+        width: 2,
+        color: "#000000",
+        type: "solid",
+    };
 
     const handleToggleMenu = (menuName: string) => {
         setActiveMenu((prev) => (prev === menuName ? null : menuName));
@@ -187,105 +186,58 @@ const NodeMenu = ({ node, updateNode }: NodeMenuProps) => {
         setActiveMenu(null);
     };
 
-    const handleStyleChange = (key: string, value: string | number) => {
-        updateNode(node.id, {
-            style: { ...node.style, [key]: value },
+    const handleStyleChange = (key: "color" | "type", value: string) => {
+        updateEdge(edge.id, {
+            style: { ...edgeStyle, [key]: value },
         });
     };
 
-    const handleBorderChange = (key: string, value: string | number) => {
-        updateNode(node.id, {
-            style: {
-                ...node.style,
-                border: { ...node.style.border, [key]: value },
-            },
-        });
-    };
-
-    const handleTextChange = (key: string, value: string | number) => {
-        updateNode(node.id, {
-            style: {
-                ...node.style,
-                text: { ...(node.style.text || {}), [key]: value },
-            },
+    const handleWidthChange = (value: number) => {
+        updateEdge(edge.id, {
+            style: { ...edgeStyle, width: value },
         });
     };
 
     return (
         <div
-            className="absolute -top-16 left-1/2 -translate-x-1/2 bg-text-100 text-text-500 p-2 rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.15)] flex items-center gap-3 z-50 whitespace-nowrap"
+            className="absolute -top-16 left-1/2 -translate-x-1/2 bg-text-100 text-text-500 p-2 rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.15)] flex items-center gap-2 z-50 whitespace-nowrap"
             onMouseDown={(e) => e.stopPropagation()}
             onDoubleClick={(e) => e.stopPropagation()}
         >
-            {/* Background Color Picker */}
-            <div className="flex items-center gap-1.5" title="Background Color">
-                <FaFill className="text-text-800 text-sm" />
+            <div className="flex items-center gap-1.5" title="Line Color">
+                <TbLine className="text-text-800 text-sm" />
                 <ColorPicker
-                    value={node.style.color}
+                    value={edgeStyle.color}
                     onChange={(val) => handleStyleChange("color", val)}
-                    isOpen={activeMenu === "bgColor"}
-                    onToggle={() => handleToggleMenu("bgColor")}
+                    isOpen={activeMenu === "lineColor"}
+                    onToggle={() => handleToggleMenu("lineColor")}
                     onClose={handleCloseMenu}
                 />
             </div>
 
-            <div className="w-px h-5 bg-text-500"></div>
-
-            {/* Border Options */}
-            <div className="flex items-center gap-1.5" title="Border">
-                <FaBorderAll className="text-text-800 text-sm" />
-                <ColorPicker
-                    value={node.style.border.color}
-                    onChange={(val) => handleBorderChange("color", val)}
-                    isOpen={activeMenu === "borderColor"}
-                    onToggle={() => handleToggleMenu("borderColor")}
+            <div className="flex items-center gap-1.5" title="Line Width">
+                <RangePicker
+                    value={edgeStyle.width}
+                    min={1}
+                    max={20}
+                    onChange={handleWidthChange}
+                    isOpen={activeMenu === "lineWidth"}
+                    onToggle={() => handleToggleMenu("lineWidth")}
                     onClose={handleCloseMenu}
                 />
+            </div>
+
+            <div className="flex items-center gap-1.5" title="Line Style">
                 <DropdownPicker
-                    value={node.style.border.type || "solid"}
-                    onChange={(val) => handleBorderChange("type", val)}
+                    value={edgeStyle.type}
+                    onChange={(val) => handleStyleChange("type", val)}
                     options={[
                         { label: <LuCircle />, value: "solid" },
                         { label: <LuCircleDashed />, value: "dashed" },
                         { label: <LuCircleDotDashed />, value: "dotted" },
                     ]}
-                    isOpen={activeMenu === "borderType"}
-                    onToggle={() => handleToggleMenu("borderType")}
-                    onClose={handleCloseMenu}
-                />
-            </div>
-
-            <div className="w-px h-5 bg-text-500"></div>
-
-            {/* Text Options */}
-            <div className="flex items-center gap-1.5" title="Text Style">
-                <FaFont className="text-text-800 text-sm" />
-                <ColorPicker
-                    value={node.style.text?.color || "#000000"}
-                    onChange={(val) => handleTextChange("color", val)}
-                    isOpen={activeMenu === "textColor"}
-                    onToggle={() => handleToggleMenu("textColor")}
-                    onClose={handleCloseMenu}
-                />
-                <RangePicker
-                    value={node.style.text?.size}
-                    min={2}
-                    max={72}
-                    onChange={(val) => handleTextChange("size", val)}
-                    isOpen={activeMenu === "textSize"}
-                    onToggle={() => handleToggleMenu("textSize")}
-                    onClose={handleCloseMenu}
-                />
-                <DropdownPicker
-                    value={node.style.text?.align || "center"}
-                    onChange={(val) => handleTextChange("align", val)}
-                    options={[
-                        { label: <FaAlignLeft />, value: "left" },
-                        { label: <FaAlignCenter />, value: "center" },
-                        { label: <FaAlignRight />, value: "right" },
-                    ]}
-                    isOpen={activeMenu === "textAlign"}
-                    onToggle={() => handleToggleMenu("textAlign")}
+                    isOpen={activeMenu === "lineType"}
+                    onToggle={() => handleToggleMenu("lineType")}
                     onClose={handleCloseMenu}
                 />
             </div>
@@ -293,4 +245,4 @@ const NodeMenu = ({ node, updateNode }: NodeMenuProps) => {
     );
 };
 
-export default NodeMenu;
+export default EdgeMenu;
