@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/Tabyss/ProJam/compare/v1.3.0...v1.4.0) (2026-07-18)
+
+
+### Features
+
+* adjust edge and menu edge ([1a2120c](https://github.com/Tabyss/ProJam/commit/1a2120c7836fb1dc75ae921fd72867bb8d4a0305))
+* adjust edge and menu edge ([a4e06da](https://github.com/Tabyss/ProJam/commit/a4e06dae23184696cb640b47051f4ebcf7ca2e7b))
+
 ## [1.3.0](https://github.com/Tabyss/ProJam/compare/v1.2.0...v1.3.0) (2026-07-11)
 
 
